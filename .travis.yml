@@ -1,0 +1,27 @@
+sudo: false
+language: c
+
+env:
+  global:
+    - VERBOSE=1
+  matrix:
+    - MPACK_LUA_VERSION=5.1.5
+    - MPACK_LUA_VERSION=5.2.4
+    - MPACK_LUA_VERSION=5.3.3
+
+addons:
+  apt:
+    packages:
+      - valgrind
+
+script:
+  make ci-test
+
+cache:
+  directories:
+    - .deps/5.1.5/usr
+    - .deps/5.2.4/usr
+    - .deps/5.3.3/usr
+
+after_failure:
+  cat valgrind.log
