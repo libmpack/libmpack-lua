@@ -1,10 +1,10 @@
-local git_tag = '1.0.4'
+local git_tag = '1.0.5'
 
 package = 'mpack'
 version = git_tag .. '-0'
 source = {
-  url = 'https://github.com/tarruda/libmpack/archive/' .. git_tag .. '.tar.gz',
-  dir = 'libmpack-' .. git_tag .. '/binding/lua',
+  url = 'https://github.com/libmpack/libmpack-lua/releases/download/' ..
+    git_tag .. '/libmpack-lua-' .. git_tag .. '.tar.gz'
 }
 
 description = {

@@ -9,8 +9,9 @@ MPACK_LUA_VERSION_NOPATCH = $(shell echo -n $(MPACK_LUA_VERSION) | sed 's!\([0-9
 LUA_URL ?= https://lua.org/ftp/lua-$(MPACK_LUA_VERSION).tar.gz
 LUAROCKS_URL ?= https://github.com/keplerproject/luarocks/archive/v2.2.0.tar.gz
 LUA_TARGET ?= linux
-MPACK_VERSION ?= 1.0.4
+MPACK_VERSION ?= 1.0.5
 MPACK_URL ?= https://github.com/tarruda/libmpack/archive/$(MPACK_VERSION).tar.gz
+LMPACK_VERSION ?= $(shell cat mpack-*.rockspec | sed -n "s/^local git_tag = '\\([^']\\+\\)'/\\1/p")
 
 # deps location
 DEPS_DIR ?= $(shell pwd)/.deps/$(MPACK_LUA_VERSION)
@@ -64,6 +65,15 @@ mpack-src:
 	dir="mpack-src"; \
 	mkdir -p $$dir && cd $$dir && \
 	$(FETCH) $(MPACK_URL) | $(UNTGZ)
+
+release: mpack-src
+	rm -f libmpack-lua-$(LMPACK_VERSION).tar.gz
+	tar cvfz libmpack-lua-$(LMPACK_VERSION).tar.gz \
+		--transform 's,^,libmpack-lua-$(LMPACK_VERSION)/,' \
+		mpack-*.rockspec lmpack.c mpack-src/src
+
+clean:
+	rm -rf mpack-src *.tar.gz *.src.rock *.so *.o
 
 depsclean:
 	rm -rf $(DEPS_DIR)
@@ -127,4 +137,4 @@ else
 	install -Dm755 $< "$(DESTDIR)$(LUA_CMOD_INSTALLDIR)/$<"
 endif
 
-.PHONY: all depsclean install test gdb valgrind ci-test
+.PHONY: all clean depsclean install test gdb valgrind ci-test release
