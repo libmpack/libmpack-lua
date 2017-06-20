@@ -689,6 +689,7 @@ static void lmpack_unparse_enter(mpack_parser_t *parser, mpack_node_t *node)
         node->tok = mpack_pack_nil();
         break;
       }
+    /* Fallthrough */
     default:
       luaL_error(L, "can't serialize object");
   }

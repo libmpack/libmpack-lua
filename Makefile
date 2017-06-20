@@ -95,11 +95,11 @@ gdb: $(BUSTED) $(MPACK)
 		$(DEPS_PREFIX)/lib/luarocks/rocks/busted/2.0.rc12-1/bin/busted test.lua
 
 ifeq ($(USE_SYSTEM_LUA),no)
-$(MPACK): $(LUAROCKS) mpack-src lmpack.c
+$(MPACK): $(LUAROCKS) mpack-src
 	$(LUAROCKS) make CFLAGS='$(CFLAGS)'
 else
-$(MPACK): mpack-src lmpack.c
-	$(CC) -shared $(CFLAGS) $(INCLUDES) $(LDFLAGS) $^ -o $@ $(LIBS)
+$(MPACK): mpack-src
+	$(CC) -shared $(CFLAGS) $(INCLUDES) $(LDFLAGS)-o $@ $(LIBS)
 endif
 
 $(BUSTED): $(LUAROCKS)
