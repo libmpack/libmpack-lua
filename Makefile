@@ -2,6 +2,13 @@
 
 # distributors probably want to set this to 'yes' for both make and make install
 USE_SYSTEM_LUA ?= no
+USE_SYSTEM_MPACK ?= no
+ifneq ($(USE_SYSTEM_MPACK),no)
+# Can't use luarocks to build if linking against system libmpack because
+# apparently luarocks doesn't let you specify extra linker flags from the
+# command line
+USE_SYSTEM_LUA := 1
+endif
 
 # Lua-related configuration
 MPACK_LUA_VERSION ?= 5.1.5
@@ -45,8 +52,16 @@ LUA_LIB := $(shell $(PKG_CONFIG) --libs lua-$(MPACK_LUA_VERSION_NOPATCH) 2>/dev/
 INCLUDES = $(LUA_INCLUDE)
 LIBS = $(LUA_LIB)
 
-LUA_CMOD_INSTALLDIR := $(shell $(PKG_CONFIG) --variable=INSTALL_CMOD lua-$(MPACK_LUA_VERSION_NOPATCH) 2>/dev/null || echo "/usr/lib/lua/$(MPACK_LUA_VERSION_NOPATCH)")
+ifeq ($(USE_SYSTEM_MPACK),no)
+CFLAGS += -DMPACK_USE_AMALGAMATION
+MPACK_SRC = mpack-src
+else
+MPACK_SRC =
+LIBS += $(shell $(PKG_CONFIG) --libs mpack 2>/dev/null || echo "-lmpack")
+CFLAGS += $(shell $(PKG_CONFIG) --cflags mpack 2> /dev/null)
+endif
 
+LUA_CMOD_INSTALLDIR := $(shell $(PKG_CONFIG) --variable=INSTALL_CMOD lua-$(MPACK_LUA_VERSION_NOPATCH) 2>/dev/null || echo "/usr/lib/lua/$(MPACK_LUA_VERSION_NOPATCH)")
 
 # Misc
 # Options used by the 'valgrind' target, which runs the tests under valgrind
@@ -95,11 +110,11 @@ gdb: $(BUSTED) $(MPACK)
 		$(DEPS_PREFIX)/lib/luarocks/rocks/busted/2.0.rc12-1/bin/busted test.lua
 
 ifeq ($(USE_SYSTEM_LUA),no)
-$(MPACK): $(LUAROCKS) mpack-src
-	$(LUAROCKS) make CFLAGS='$(CFLAGS)'
+$(MPACK): $(LUAROCKS) $(MPACK_SRC) lmpack.c
+	$(LUAROCKS) make CFLAGS='$(CFLAGS)' $(LUAROCKS_LDFLAGS)
 else
-$(MPACK): mpack-src
-	$(CC) -shared $(CFLAGS) $(INCLUDES) $(LDFLAGS)-o $@ $(LIBS)
+$(MPACK): lmpack.c $(MPACK_SRC)
+	$(CC) -shared $(CFLAGS) $(INCLUDES) $(LDFLAGS) $< -o $@ $(LIBS)
 endif
 
 $(BUSTED): $(LUAROCKS)

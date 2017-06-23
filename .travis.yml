@@ -13,6 +13,27 @@ addons:
   apt:
     packages:
       - valgrind
+      - liblua5.1-0-dev
+
+matrix:
+  include:
+    - os: linux
+      env: USE_SYSTEM_LUA=1
+      script:
+        - make ci-test
+        - ldd -d mpack.so | grep -q /usr/lib/x86_64-linux-gnu/liblua
+
+    - os: linux
+      env: USE_SYSTEM_LUA=1 USE_SYSTEM_MPACK=1
+      script:
+        - export PREFIX=$(pwd)/mpack-src/usr
+        - export LD_LIBRARY_PATH=${PREFIX}/lib
+        - export PKG_CONFIG_PATH=${PREFIX}/lib/pkgconfig
+        - make mpack-src
+        - make -C mpack-src config=release install
+        - make ci-test
+        - ldd -d mpack.so | grep -q ${PREFIX}/lib/libmpack
+        - ldd -d mpack.so | grep -q /usr/lib/x86_64-linux-gnu/liblua
 
 script:
   make ci-test
