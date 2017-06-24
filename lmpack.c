@@ -16,13 +16,18 @@
  */
 #define LUA_LIB
 #include <stdlib.h>
+#include <string.h>
 #include <limits.h>
 
 #include <lua.h>
 #include <lauxlib.h>
 
-#define MPACK_API static
-#include "mpack-src/src/mpack.c"
+#ifdef MPACK_USE_AMALGAMATION
+# define MPACK_API static
+# include "mpack-src/src/mpack.c"
+#else
+# include <mpack.h>
+#endif
 
 #define UNPACKER_META_NAME "mpack.Unpacker"
 #define PACKER_META_NAME "mpack.Packer"
