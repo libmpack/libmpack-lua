@@ -18,7 +18,7 @@ LUAROCKS_URL ?= https://github.com/keplerproject/luarocks/archive/v2.2.0.tar.gz
 LUA_TARGET ?= linux
 MPACK_VERSION ?= 1.0.5
 MPACK_URL ?= https://github.com/tarruda/libmpack/archive/$(MPACK_VERSION).tar.gz
-LMPACK_VERSION ?= $(shell cat mpack-*.rockspec | sed -n "s/^local git_tag = '\\([^']\\+\\)'/\\1/p")
+LMPACK_VERSION != sed "/^local git_tag =/!d;s/[^']*'//;s/'$//;q" mpack-*.rockspec
 
 # deps location
 DEPS_DIR ?= $(CURDIR)/.deps/$(MPACK_LUA_VERSION)
