@@ -24,13 +24,14 @@ LMPACK_VERSION ?= $(shell cat mpack-*.rockspec | sed -n "s/^local git_tag = '\\(
 DEPS_DIR ?= $(shell pwd)/.deps/$(MPACK_LUA_VERSION)
 DEPS_PREFIX ?= $(DEPS_DIR)/usr
 DEPS_BIN ?= $(DEPS_PREFIX)/bin
+DEPS_CMOD ?= $(DEPS_PREFIX)/lib/lua/$(MPACK_LUA_VERSION_NOPATCH)
 
 # targets
 LUA ?= $(DEPS_BIN)/lua
 LUAROCKS ?= $(DEPS_BIN)/luarocks
 BUSTED ?= $(DEPS_BIN)/busted
 ifeq ($(USE_SYSTEM_LUA),no)
-MPACK ?= $(DEPS_PREFIX)/lib/lua/$(MPACK_LUA_VERSION_NOPATCH)/mpack.so
+MPACK ?= $(DEPS_CMOD)/mpack.so
 else
 MPACK ?= mpack.so
 endif
@@ -109,13 +110,11 @@ gdb: $(BUSTED) $(MPACK)
 	gdb -x .gdb --args $(LUA) \
 		$(DEPS_PREFIX)/lib/luarocks/rocks/busted/2.0.rc12-1/bin/busted test.lua
 
-ifeq ($(USE_SYSTEM_LUA),no)
-$(MPACK): $(LUAROCKS) $(MPACK_SRC) lmpack.c
+$(DEPS_CMOD)/mpack.so: $(LUAROCKS) $(MPACK_SRC) lmpack.c
 	$(LUAROCKS) make CFLAGS='$(CFLAGS)' $(LUAROCKS_LDFLAGS)
-else
-$(MPACK): lmpack.c $(MPACK_SRC)
+
+mpack.so: lmpack.c $(MPACK_SRC)
 	$(CC) -shared $(CFLAGS) $(INCLUDES) $(LDFLAGS) $< -o $@ $(LIBS)
-endif
 
 $(BUSTED): $(LUAROCKS)
 	$(LUAROCKS) install penlight 1.3.2-2
