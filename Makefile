@@ -21,7 +21,7 @@ MPACK_URL ?= https://github.com/tarruda/libmpack/archive/$(MPACK_VERSION).tar.gz
 LMPACK_VERSION ?= $(shell cat mpack-*.rockspec | sed -n "s/^local git_tag = '\\([^']\\+\\)'/\\1/p")
 
 # deps location
-DEPS_DIR ?= $(shell pwd)/.deps/$(MPACK_LUA_VERSION)
+DEPS_DIR ?= $(CURDIR)/.deps/$(MPACK_LUA_VERSION)
 DEPS_PREFIX ?= $(DEPS_DIR)/usr
 DEPS_BIN ?= $(DEPS_PREFIX)/bin
 DEPS_CMOD ?= $(DEPS_PREFIX)/lib/lua/$(MPACK_LUA_VERSION_NOPATCH)
