@@ -12,7 +12,7 @@ endif
 
 # Lua-related configuration
 MPACK_LUA_VERSION ?= 5.1.5
-MPACK_LUA_VERSION_NOPATCH = $(shell echo -n $(MPACK_LUA_VERSION) | sed 's!\([0-9]\.[0-9]\).[0-9]!\1!')
+MPACK_LUA_VERSION_NOPATCH = $(basename $(MPACK_LUA_VERSION))
 LUA_URL ?= https://lua.org/ftp/lua-$(MPACK_LUA_VERSION).tar.gz
 LUAROCKS_URL ?= https://github.com/keplerproject/luarocks/archive/v2.2.0.tar.gz
 LUA_TARGET ?= linux
