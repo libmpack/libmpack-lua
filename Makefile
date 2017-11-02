@@ -48,10 +48,10 @@ ifeq ($(MPACK_LUA_VERSION_NOPATCH),5.3)
 CFLAGS += -DLUA_C89_NUMBERS
 endif
 
-LUA_INCLUDE := $(shell $(PKG_CONFIG) --cflags lua-$(MPACK_LUA_VERSION_NOPATCH) 2>/dev/null || echo "-I/usr/include/lua$(MPACK_LUA_VERSION_NOPATCH)")
-LUA_LIB := $(shell $(PKG_CONFIG) --libs lua-$(MPACK_LUA_VERSION_NOPATCH) 2>/dev/null || echo "-llua$(MPACK_LUA_VERSION_NOPATCH)")
+LUA_IMPL ?= lua-$(MPACK_LUA_VERSION_NOPATCH)
+LUA_INCLUDE ?= $(shell $(PKG_CONFIG) --cflags $(LUA_IMPL) 2>/dev/null || echo "-I/usr/include/lua$(MPACK_LUA_VERSION_NOPATCH)")
 INCLUDES = $(LUA_INCLUDE)
-LIBS = $(LUA_LIB)
+LIBS =
 
 ifeq ($(USE_SYSTEM_MPACK),no)
 CFLAGS += -DMPACK_USE_AMALGAMATION
@@ -62,7 +62,7 @@ LIBS += $(shell $(PKG_CONFIG) --libs mpack 2>/dev/null || echo "-lmpack")
 CFLAGS += $(shell $(PKG_CONFIG) --cflags mpack 2> /dev/null)
 endif
 
-LUA_CMOD_INSTALLDIR := $(shell $(PKG_CONFIG) --variable=INSTALL_CMOD lua-$(MPACK_LUA_VERSION_NOPATCH) 2>/dev/null || echo "/usr/lib/lua/$(MPACK_LUA_VERSION_NOPATCH)")
+LUA_CMOD_INSTALLDIR ?= $(shell $(PKG_CONFIG) --variable=INSTALL_CMOD $(LUA_IMPL) 2>/dev/null || echo "/usr/lib/lua/$(MPACK_LUA_VERSION_NOPATCH)")
 
 # Misc
 # Options used by the 'valgrind' target, which runs the tests under valgrind
