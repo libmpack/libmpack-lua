@@ -21,7 +21,6 @@ matrix:
       env: USE_SYSTEM_LUA=1
       script:
         - make ci-test
-        - ldd -d mpack.so | grep -q /usr/lib/x86_64-linux-gnu/liblua
 
     - os: linux
       env: USE_SYSTEM_LUA=1 USE_SYSTEM_MPACK=1
@@ -33,7 +32,6 @@ matrix:
         - make -C mpack-src config=release install
         - make ci-test
         - ldd -d mpack.so | grep -q ${PREFIX}/lib/libmpack
-        - ldd -d mpack.so | grep -q /usr/lib/x86_64-linux-gnu/liblua
 
 script:
   make ci-test
