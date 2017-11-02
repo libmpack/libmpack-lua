@@ -12,25 +12,26 @@ endif
 
 # Lua-related configuration
 MPACK_LUA_VERSION ?= 5.1.5
-MPACK_LUA_VERSION_NOPATCH = $(shell echo -n $(MPACK_LUA_VERSION) | sed 's!\([0-9]\.[0-9]\).[0-9]!\1!')
+MPACK_LUA_VERSION_NOPATCH = $(basename $(MPACK_LUA_VERSION))
 LUA_URL ?= https://lua.org/ftp/lua-$(MPACK_LUA_VERSION).tar.gz
 LUAROCKS_URL ?= https://github.com/keplerproject/luarocks/archive/v2.2.0.tar.gz
 LUA_TARGET ?= linux
 MPACK_VERSION ?= 1.0.5
 MPACK_URL ?= https://github.com/tarruda/libmpack/archive/$(MPACK_VERSION).tar.gz
-LMPACK_VERSION ?= $(shell cat mpack-*.rockspec | sed -n "s/^local git_tag = '\\([^']\\+\\)'/\\1/p")
+LMPACK_VERSION != sed "/^local git_tag =/!d;s/[^']*'//;s/'$//;q" mpack-*.rockspec
 
 # deps location
-DEPS_DIR ?= $(shell pwd)/.deps/$(MPACK_LUA_VERSION)
+DEPS_DIR ?= $(CURDIR)/.deps/$(MPACK_LUA_VERSION)
 DEPS_PREFIX ?= $(DEPS_DIR)/usr
 DEPS_BIN ?= $(DEPS_PREFIX)/bin
+DEPS_CMOD ?= $(DEPS_PREFIX)/lib/lua/$(MPACK_LUA_VERSION_NOPATCH)
 
 # targets
 LUA ?= $(DEPS_BIN)/lua
 LUAROCKS ?= $(DEPS_BIN)/luarocks
 BUSTED ?= $(DEPS_BIN)/busted
 ifeq ($(USE_SYSTEM_LUA),no)
-MPACK ?= $(DEPS_PREFIX)/lib/lua/$(MPACK_LUA_VERSION_NOPATCH)/mpack.so
+MPACK ?= $(DEPS_CMOD)/mpack.so
 else
 MPACK ?= mpack.so
 endif
@@ -109,13 +110,11 @@ gdb: $(BUSTED) $(MPACK)
 	gdb -x .gdb --args $(LUA) \
 		$(DEPS_PREFIX)/lib/luarocks/rocks/busted/2.0.rc12-1/bin/busted test.lua
 
-ifeq ($(USE_SYSTEM_LUA),no)
-$(MPACK): $(LUAROCKS) $(MPACK_SRC) lmpack.c
+$(DEPS_CMOD)/mpack.so: $(LUAROCKS) $(MPACK_SRC) lmpack.c
 	$(LUAROCKS) make CFLAGS='$(CFLAGS)' $(LUAROCKS_LDFLAGS)
-else
-$(MPACK): lmpack.c $(MPACK_SRC)
+
+mpack.so: lmpack.c $(MPACK_SRC)
 	$(CC) -shared $(CFLAGS) $(INCLUDES) $(LDFLAGS) $< -o $@ $(LIBS)
-endif
 
 $(BUSTED): $(LUAROCKS)
 	$(LUAROCKS) install penlight 1.3.2-2
