@@ -47,7 +47,9 @@
 #endif
 
 #if LUA_VERSION_NUM > 501
+#ifndef luaL_register
 #define luaL_register(L,n,f) luaL_setfuncs(L,f,0)
+#endif
 #endif
 
 typedef struct {
