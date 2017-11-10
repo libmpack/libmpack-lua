@@ -23,11 +23,11 @@
 #include <lua.h>
 #include <luaconf.h>
 
-#ifdef MPACK_USE_AMALGAMATION
+#ifdef MPACK_USE_SYSTEM
+# include <mpack.h>
+#else
 # define MPACK_API static
 # include "mpack-src/src/mpack.c"
-#else
-# include <mpack.h>
 #endif
 
 #define UNPACKER_META_NAME "mpack.Unpacker"

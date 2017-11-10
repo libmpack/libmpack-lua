@@ -54,12 +54,11 @@ INCLUDES = $(LUA_INCLUDE)
 LIBS =
 
 ifeq ($(USE_SYSTEM_MPACK),no)
-CFLAGS += -DMPACK_USE_AMALGAMATION
 MPACK_SRC = mpack-src
 else
 MPACK_SRC =
 LIBS += $(shell $(PKG_CONFIG) --libs mpack 2>/dev/null || echo "-lmpack")
-CFLAGS += $(shell $(PKG_CONFIG) --cflags mpack 2> /dev/null)
+CFLAGS += -DMPACK_USE_SYSTEM $(shell $(PKG_CONFIG) --cflags mpack 2> /dev/null)
 endif
 
 LUA_CMOD_INSTALLDIR ?= $(shell $(PKG_CONFIG) --variable=INSTALL_CMOD $(LUA_IMPL) 2>/dev/null || echo "/usr/lib/lua/$(MPACK_LUA_VERSION_NOPATCH)")
