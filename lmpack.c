@@ -200,9 +200,12 @@ static void lmpack_pushnil(lua_State *L)
 static mpack_uint32_t lmpack_objlen(lua_State *L, int *is_array)
 {
   size_t len, max;
-  int isarr, type, top;
+  int isarr, type;
   lua_Number n;
-  assert(top = lua_gettop(L));
+#ifndef NDEBUG
+  int top = lua_gettop(L);
+  assert(top);
+#endif
 
   if ((type = lua_type(L, -1)) != LUA_TTABLE) {
 #if LUA_VERSION_NUM >= 502
