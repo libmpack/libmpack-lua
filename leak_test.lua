@@ -187,6 +187,27 @@ function rpc_unpack()
   session:receive(fhex('61'))
 end
 
+-- create a session out of the function scope to make sure the
+-- collect call can capture the leak
+local session = mpack.Session({unpack = mpack.Unpacker()})
+
+function callback(err, result)
+end
+
+function test_request_cb_leak()
+  local pack = mpack.Packer()
+
+  -- create request
+  local request = session:request(callback) .. pack('method') .. pack('args')
+
+  -- receive the request
+  local _, id = session:receive(request, 1)
+  local response = session:reply(id) .. pack(mpack.NIL) .. pack('response')
+
+  -- handle the response
+  local _, cb = session:receive(response, 1)
+end
+
 function run()
   simple_unpack()
   simple_pack()
@@ -196,6 +217,7 @@ function run()
   cyclic_ref()
   rpc()
   rpc_unpack()
+  test_request_cb_leak()
 end
 
 function collect()
