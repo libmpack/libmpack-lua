@@ -9,7 +9,8 @@ source = {
 
 description = {
   summary = 'Lua binding to libmpack',
-  license = 'MIT'
+  license = 'MIT',
+  homepage = 'https://github.com/libmpack/libmpack-lua'
 }
 
 build = {
