@@ -18,6 +18,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include <lauxlib.h>
 #include <lua.h>
@@ -712,7 +713,12 @@ static void lmpack_unparse_enter(mpack_parser_t *parser, mpack_node_t *node)
       }
     /* Fallthrough */
     default:
-      luaL_error(L, "can't serialize object");
+	  {
+		/* #define FMT */
+		char errmsg[50];
+		snprintf(errmsg, 50, "can't serialize object of type %d", type);
+		luaL_error(L, errmsg);
+	  }
   }
 
 end:
