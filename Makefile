@@ -17,7 +17,7 @@ LUA_URL ?= https://lua.org/ftp/lua-$(MPACK_LUA_VERSION).tar.gz
 LUAROCKS_URL ?= https://github.com/keplerproject/luarocks/archive/v2.2.0.tar.gz
 LUA_TARGET ?= linux
 MPACK_VERSION ?= 1.0.5
-MPACK_URL ?= https://github.com/tarruda/libmpack/archive/$(MPACK_VERSION).tar.gz
+MPACK_URL ?= https://github.com/libmpack/libmpack/archive/$(MPACK_VERSION).tar.gz
 LMPACK_VERSION != sed "/^local git_tag =/!d;s/[^']*'//;s/'\$$//;q" mpack-*.rockspec
 
 # deps location
