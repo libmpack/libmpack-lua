@@ -470,4 +470,16 @@ describe('mpack', function()
       assert.are_same("mpack.NIL", tostring(mpack.NIL))
     end)
   end)
+
+  it('should allow to be required twice', function()
+    package.loaded['mpack'] = nil
+    local ok, new_mpack_or_err = pcall(require, 'mpack')
+    assert.is_true(ok, new_mpack_or_err)
+    assert.are.equals(new_mpack_or_err.NIL, mpack.NIL)
+    assert.are.equals(
+      getmetatable(mpack.NIL),
+      getmetatable(new_mpack_or_err.NIL)
+    )
+  end)
+
 end)
