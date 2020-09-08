@@ -15,6 +15,8 @@
  * compilation.
  */
 #define LUA_LIB
+/* for snprintf */
+#define _XOPEN_SOURCE 500
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
