@@ -912,6 +912,8 @@ static int lmpack_session_receive(lua_State *L)
     case MPACK_RPC_RESPONSE:
       lua_pushstring(L, "response");
       lmpack_geti(L, session->reg, (int)session->unpacked.msg.data.i);
+      lmpack_unref(L, session->reg, (int)session->unpacked.msg.data.i);
+      session->unpacked.msg.data.i = LUA_NOREF;
       break;
     case MPACK_RPC_NOTIFICATION:
       lua_pushstring(L, "notification");
