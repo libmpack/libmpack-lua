@@ -41,7 +41,7 @@ CC ?= gcc
 PKG_CONFIG ?= pkg-config
 CFLAGS ?= -ansi -O0 -g3 -Wall -Wextra -Werror -Wconversion \
 	-Wstrict-prototypes -Wno-unused-parameter -pedantic
-CFLAGS += -fPIC -DMPACK_DEBUG_REGISTRY_LEAK
+CFLAGS += -fPIC -std=c99 -DMPACK_DEBUG_REGISTRY_LEAK
 ifeq ($(MPACK_LUA_VERSION_NOPATCH),5.3)
 # Lua 5.3 has integer type, which is not 64 bits for -ansi since c89 doesn't
 # have `long long` type.
