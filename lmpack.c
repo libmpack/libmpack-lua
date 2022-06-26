@@ -16,7 +16,12 @@
  */
 #define LUA_LIB
 /* for snprintf */
+#ifdef __APPLE__
+// Apple uses C99 source, not XOPEN
+#define _C99_SOURCE 1
+#else
 #define _XOPEN_SOURCE 500
+#endif
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
