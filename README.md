@@ -19,5 +19,3 @@ For a complete list of targets run:
 ```bash
 make; cd .deps/5.1.5/src/lua && make
 ```
-
-`LUA_TARGET` will default to `linux` if not specified.
