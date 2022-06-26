@@ -9,7 +9,8 @@ LUA_TARGET=$(PLATFORM) make
 ```
 
 Where `PLATFORM` is a supported Lua 5.1 platform: linux (default), freebsd, macosx, ...
-For a complete list of targets run:
+
+For the complete list of targets run:
 ```bash
 make; cd .deps/5.1.5/src/lua && make
 ```
