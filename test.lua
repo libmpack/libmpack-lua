@@ -152,6 +152,15 @@ describe('mpack', function()
     end)
   end)
 
+  describe('list-like table with string keys', function()
+    it('ok', function()
+      local unpack = mpack.Unpacker()
+      local pack = mpack.Packer()
+      local tbl = {['1'] = 0, [2] = 1, ['3'] = 3}
+      assert.are_same(tbl, unpack(pack(tbl)))
+    end)
+  end)
+
   describe('very large array', function()
     it('ok', function()
       local arr = {}
