@@ -472,6 +472,26 @@ describe('mpack', function()
       assert.are_same('response', session:receive(fhex('94 01 20')))
       assert.has_errors(function() session:receive(fhex('94 01 21')) end)
     end)
+
+    it('supports split requests', function()
+      local session = mpack.Session({unpack = mpack.Unpacker()})
+      -- The first packet contains one full request and a partial request
+      local packet1 = fhex('94 00 00 a7 6d 65 74 68 6f 64 30 92 01 a1 61 94 00 01 a7')
+      -- The second package contains more of the partial request
+      local packet2 = fhex('6d 65 74 68 6f 64 31')
+      -- The third package contains the rest of the second request and another complete request
+      local packet3 = fhex('92 02 a1 62 94 00 02 a7 6d 65 74 68 6f 64 32 92 03 a1 63')
+      assert.are_same({'request', 0, 'method0', {1, 'a'}, 16},
+        {session:receive(packet1)})
+      assert.are_same({nil, nil, nil, nil, 20},
+        {session:receive(packet1, 16)})
+      assert.are_same({nil, nil, nil, nil, 8},
+        {session:receive(packet2)})
+      assert.are_same({'request', 1, 'method1', {2, 'b'}, 5},
+        {session:receive(packet3)})
+      assert.are_same({'request', 2, 'method2', {3, 'c'}, 20},
+        {session:receive(packet3, 5)})
+    end)
   end)
 
   describe('NIL', function()
