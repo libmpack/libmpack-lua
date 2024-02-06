@@ -48,7 +48,7 @@ ifeq ($(MPACK_LUA_VERSION_NOPATCH),5.3)
 CFLAGS += -DLUA_C89_NUMBERS
 endif
 
-LUA_IMPL ?= lua-$(MPACK_LUA_VERSION_NOPATCH)
+LUA_IMPL ?= $(shell for p in lua$(MPACK_LUA_VERSION_NOPATCH) lua-$(MPACK_LUA_VERSION_NOPATCH) ; do $(PKG_CONFIG) --exists $$p && echo $$p && break ; done)
 LUA_INCLUDE ?= $(shell $(PKG_CONFIG) --cflags $(LUA_IMPL) 2>/dev/null || echo "-I/usr/include/lua$(MPACK_LUA_VERSION_NOPATCH)")
 INCLUDES = $(LUA_INCLUDE)
 LIBS =
