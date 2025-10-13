@@ -54,6 +54,10 @@
 #define luaL_reg    luaL_Reg
 #endif
 
+#if LUA_VERSION_NUM < 502
+# define luaL_reg luaL_Reg
+#endif
+
 #if LUA_VERSION_NUM > 501
 #ifndef luaL_register
 #define luaL_register(L,n,f) luaL_setfuncs(L,f,0)
